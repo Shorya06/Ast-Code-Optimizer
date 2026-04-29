@@ -73,24 +73,24 @@ static const char* type_to_string(NodeType type) {
     }
 }
 
-static void print_ast_internal(Node* node, int depth, int* is_parent_last, int is_last) {
+static void print_ast_internal(Node* node, int depth, int* is_parent_last, int is_last, FILE* out) {
     if (!node) return;
 
     for (int i = 0; i < depth; i++) {
         if (is_parent_last[i]) {
-            printf("    ");
+            fprintf(out, "    ");
         } else {
-            printf("│   ");
+            fprintf(out, "│   ");
         }
     }
 
-    printf(is_last ? "└── " : "├── ");
+    fprintf(out, is_last ? "└── " : "├── ");
 
-    printf("\033[1;36m%s\033[0m", type_to_string(node->type));
+    fprintf(out, "\033[1;36m%s\033[0m", type_to_string(node->type));
     if (node->value) {
-        printf(" [\033[1;32m%s\033[0m]", node->value);
+        fprintf(out, " [\033[1;32m%s\033[0m]", node->value);
     }
-    printf("\n");
+    fprintf(out, "\n");
 
     is_parent_last[depth] = is_last;
 
@@ -103,31 +103,31 @@ static void print_ast_internal(Node* node, int depth, int* is_parent_last, int i
     curr = node->left;
     while (curr) {
         int is_last = (curr->next == NULL && !has_middle && !has_right);
-        print_ast_internal(curr, depth + 1, is_parent_last, is_last);
+        print_ast_internal(curr, depth + 1, is_parent_last, is_last, out);
         curr = curr->next;
     }
 
     curr = node->middle;
     while (curr) {
         int is_last = (curr->next == NULL && !has_right);
-        print_ast_internal(curr, depth + 1, is_parent_last, is_last);
+        print_ast_internal(curr, depth + 1, is_parent_last, is_last, out);
         curr = curr->next;
     }
 
     curr = node->right;
     while (curr) {
         int is_last = (curr->next == NULL);
-        print_ast_internal(curr, depth + 1, is_parent_last, is_last);
+        print_ast_internal(curr, depth + 1, is_parent_last, is_last, out);
         curr = curr->next;
     }
 }
 
-void print_ast(Node* node, int depth) {
+void print_ast(Node* node, int depth, FILE* out) {
     int is_parent_last[1024] = {0};
     Node* curr = node;
     while (curr) {
         int is_last = (curr->next == NULL);
-        print_ast_internal(curr, depth, is_parent_last, is_last);
+        print_ast_internal(curr, depth, is_parent_last, is_last, out);
         curr = curr->next;
     }
 }

@@ -1,0 +1,62 @@
+└── [1;36mProgram[0m
+    ├── [1;36mVariableDeclaration[0m
+    │   ├── [1;36mType(int)[0m
+    │   └── [1;36mAssignment[0m [[1;32m=[0m]
+    │       ├── [1;36mIdentifier[0m [[1;32mfactor[0m]
+    │       └── [1;36mNumberLiteral[0m [[1;32m2[0m]
+    ├── [1;36mVariableDeclaration[0m
+    │   ├── [1;36mType(int)[0m
+    │   └── [1;36mAssignment[0m [[1;32m=[0m]
+    │       ├── [1;36mIdentifier[0m [[1;32mresult[0m]
+    │       └── [1;36mNumberLiteral[0m [[1;32m16[0m]
+    ├── [1;36mVariableDeclaration[0m
+    │   ├── [1;36mType(int)[0m
+    │   └── [1;36mAssignment[0m [[1;32m=[0m]
+    │       ├── [1;36mIdentifier[0m [[1;32mfolded[0m]
+    │       └── [1;36mNumberLiteral[0m [[1;32m16[0m]
+    ├── [1;36mVariableDeclaration[0m
+    │   ├── [1;36mType(int)[0m
+    │   └── [1;36mAssignment[0m [[1;32m=[0m]
+    │       ├── [1;36mIdentifier[0m [[1;32mi[0m]
+    │       └── [1;36mNumberLiteral[0m [[1;32m4[0m]
+    ├── [1;36mIfStatement[0m
+    │   ├── [1;36mBinaryOperation[0m [[1;32m>[0m]
+    │   │   ├── [1;36mIdentifier[0m [[1;32mresult[0m]
+    │   │   └── [1;36mNumberLiteral[0m [[1;32m10[0m]
+    │   └── [1;36mBlock[0m
+    │       └── [1;36mExpressionStatement[0m
+    │           └── [1;36mAssignment[0m [[1;32m=[0m]
+    │               ├── [1;36mIdentifier[0m [[1;32mresult[0m]
+    │               └── [1;36mBinaryOperation[0m [[1;32m+[0m]
+    │                   ├── [1;36mIdentifier[0m [[1;32mresult[0m]
+    │                   └── [1;36mIdentifier[0m [[1;32mfactor[0m]
+    ├── [1;36mForLoop[0m
+    │   ├── [1;36mAssignment[0m [[1;32m=[0m]
+    │   │   ├── [1;36mIdentifier[0m [[1;32mi[0m]
+    │   │   └── [1;36mNumberLiteral[0m [[1;32m0[0m]
+    │   ├── [1;36mBinaryOperation[0m [[1;32m<[0m]
+    │   │   ├── [1;36mIdentifier[0m [[1;32mi[0m]
+    │   │   └── [1;36mNumberLiteral[0m [[1;32m3[0m]
+    │   └── [1;36mProgram[0m
+    │       ├── [1;36mUnaryOperation[0m [[1;32m(post)++[0m]
+    │       │   └── [1;36mIdentifier[0m [[1;32mi[0m]
+    │       └── [1;36mBlock[0m
+    │           └── [1;36mExpressionStatement[0m
+    │               └── [1;36mAssignment[0m [[1;32m=[0m]
+    │                   ├── [1;36mIdentifier[0m [[1;32mfolded[0m]
+    │                   └── [1;36mBinaryOperation[0m [[1;32m+[0m]
+    │                       ├── [1;36mIdentifier[0m [[1;32mfolded[0m]
+    │                       └── [1;36mIdentifier[0m [[1;32mi[0m]
+    ├── [1;36mWhileLoop[0m
+    │   ├── [1;36mBinaryOperation[0m [[1;32m<[0m]
+    │   │   ├── [1;36mIdentifier[0m [[1;32mfactor[0m]
+    │   │   └── [1;36mNumberLiteral[0m [[1;32m5[0m]
+    │   └── [1;36mBlock[0m
+    │       └── [1;36mExpressionStatement[0m
+    │           └── [1;36mAssignment[0m [[1;32m=[0m]
+    │               ├── [1;36mIdentifier[0m [[1;32mfactor[0m]
+    │               └── [1;36mBinaryOperation[0m [[1;32m+[0m]
+    │                   ├── [1;36mIdentifier[0m [[1;32mfactor[0m]
+    │                   └── [1;36mNumberLiteral[0m [[1;32m1[0m]
+    └── [1;36mReturn[0m
+        └── [1;36mIdentifier[0m [[1;32mresult[0m]

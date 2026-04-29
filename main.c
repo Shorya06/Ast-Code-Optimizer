@@ -73,7 +73,13 @@ int main(int argc, char** argv) {
         
         printf("\n\033[1;32m=== AST BEFORE OPTIMIZATION ===\033[0m\n");
         if (root) {
-            print_ast(root, 0);
+            print_ast(root, 0, stdout);
+            
+            FILE* before_f = fopen("ast_before.txt", "w");
+            if (before_f) {
+                print_ast(root, 0, before_f);
+                fclose(before_f);
+            }
             
             generate_dot_file(root, "AST_before.dot");
             
@@ -81,7 +87,13 @@ int main(int argc, char** argv) {
             root = optimize_ast(root);
             
             printf("\n\033[1;32m=== AST AFTER OPTIMIZATION ===\033[0m\n");
-            print_ast(root, 0);
+            print_ast(root, 0, stdout);
+            
+            FILE* after_f = fopen("ast_after.txt", "w");
+            if (after_f) {
+                print_ast(root, 0, after_f);
+                fclose(after_f);
+            }
             
             generate_dot_file(root, "AST_after.dot");
             

@@ -175,6 +175,8 @@ static Node* constant_fold(Node* node) {
         if (strcmp(node->value, "+") == 0) result = left_val + right_val;
         else if (strcmp(node->value, "-") == 0) result = left_val - right_val;
         else if (strcmp(node->value, "*") == 0) result = left_val * right_val;
+        else if (strcmp(node->value, "<<") == 0) result = left_val << right_val;
+        else if (strcmp(node->value, ">>") == 0) result = left_val >> right_val;
         else if (strcmp(node->value, "/") == 0) {
             if (right_val != 0) result = left_val / right_val;
             else folded = 0;
@@ -305,12 +307,15 @@ Node* optimize_ast(Node* root) {
     opt_constant_propagated = 0;
 
     free_sym_table();
+    // Pre-fold basic expressions so they can be recognized as constants
+    root = constant_fold(root);
     collect_usage(root);
 
-    // Apply passes
+    // Apply main passes
     root = constant_propagation(root);
-    root = constant_fold(root);
+    root = constant_fold(root); // Fold again after propagation
     root = strength_reduction(root);
+    root = constant_fold(root); // Fold again after strength reduction to catch shifts
     root = dead_code_elimination(root);
     
     free_sym_table();
@@ -318,6 +323,12 @@ Node* optimize_ast(Node* root) {
     if (opt_constant_propagated == 0 && opt_constant_folded == 0 && opt_strength_reduced == 0 && opt_dead_code_eliminated == 0) {
         printf("[\033[1;34mi\033[0m] No optimizations could be applied.\n");
     }
+
+    printf("\n\033[1;33m=== OPTIMIZATION SUMMARY ===\033[0m\n");
+    printf("Constant Folding Applied: %d\n", opt_constant_folded);
+    printf("Constant Propagation Applied: %d\n", opt_constant_propagated);
+    printf("Strength Reduction Applied: %d\n", opt_strength_reduced);
+    printf("Dead Code Eliminated: %d\n", opt_dead_code_eliminated);
 
     return root;
 }

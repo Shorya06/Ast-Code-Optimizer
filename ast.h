@@ -40,7 +40,7 @@ typedef struct Node {
 Node* create_node(NodeType type, const char* value, Node* left, Node* right);
 Node* create_node_3(NodeType type, const char* value, Node* left, Node* middle, Node* right);
 Node* create_list_node(Node* current, Node* next);
-void print_ast(Node* node, int depth);
+void print_ast(Node* node, int depth, FILE* out);
 void free_ast(Node* node);
 void generate_dot_file(Node* node, const char* filename);
 

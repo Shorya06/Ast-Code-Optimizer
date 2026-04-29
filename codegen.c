@@ -40,13 +40,19 @@ static void generate_code_internal(Node* node, FILE* out, int level) {
         case NODE_FUNC_DECL:
             fprintf(out, "\n");
             indent(out, level);
-            // left: type, middle: id, right: block
             generate_code_internal(node->left, out, 0); // type
             fprintf(out, " ");
             generate_code_internal(node->middle, out, 0); // id
-            fprintf(out, "() "); // For now, empty params
-            if (node->right) {
-                generate_code_internal(node->right, out, level); // block
+            fprintf(out, "() "); 
+            if (node->right && node->right->type == NODE_BLOCK) {
+                fprintf(out, "{\n");
+                Node* curr = node->right->left;
+                while (curr) {
+                    generate_code_internal(curr, out, level + 1);
+                    curr = curr->next;
+                }
+                indent(out, level);
+                fprintf(out, "}\n");
             } else {
                 fprintf(out, ";\n");
             }
@@ -64,7 +70,13 @@ static void generate_code_internal(Node* node, FILE* out, int level) {
             if (level > 0) indent(out, level);
             generate_code_internal(node->left, out, 0);
             fprintf(out, " %s ", node->value ? node->value : "=");
-            generate_code_internal(node->right, out, 0);
+            if (node->right && node->right->type == NODE_BINOP) {
+                generate_code_internal(node->right->left, out, 0);
+                fprintf(out, " %s ", node->right->value);
+                generate_code_internal(node->right->right, out, 0);
+            } else {
+                generate_code_internal(node->right, out, 0);
+            }
             if (level > 0) fprintf(out, ";\n");
             break;
 
@@ -105,11 +117,28 @@ static void generate_code_internal(Node* node, FILE* out, int level) {
         case NODE_IF:
             indent(out, level);
             fprintf(out, "if (");
-            generate_code_internal(node->left, out, 0); // Condition
+            if (node->left && node->left->type == NODE_BINOP) {
+                generate_code_internal(node->left->left, out, 0);
+                fprintf(out, " %s ", node->left->value);
+                generate_code_internal(node->left->right, out, 0);
+            } else {
+                generate_code_internal(node->left, out, 0);
+            }
             fprintf(out, ") ");
             if (node->middle) {
-                if (node->middle->type != NODE_BLOCK) fprintf(out, "\n");
-                generate_code_internal(node->middle, out, node->middle->type != NODE_BLOCK ? level + 1 : level);
+                if (node->middle->type == NODE_BLOCK) {
+                    fprintf(out, "{\n");
+                    Node* curr = node->middle->left;
+                    while (curr) {
+                        generate_code_internal(curr, out, level + 1);
+                        curr = curr->next;
+                    }
+                    indent(out, level);
+                    fprintf(out, "}\n");
+                } else {
+                    fprintf(out, "\n");
+                    generate_code_internal(node->middle, out, level + 1);
+                }
             } else {
                 fprintf(out, "{}\n");
             }
@@ -117,19 +146,49 @@ static void generate_code_internal(Node* node, FILE* out, int level) {
             if (node->right) {
                 indent(out, level);
                 fprintf(out, "else ");
-                if (node->right->type != NODE_BLOCK && node->right->type != NODE_IF) fprintf(out, "\n");
-                generate_code_internal(node->right, out, (node->right->type != NODE_BLOCK && node->right->type != NODE_IF) ? level + 1 : level);
+                if (node->right->type == NODE_BLOCK) {
+                    fprintf(out, "{\n");
+                    Node* curr = node->right->left;
+                    while (curr) {
+                        generate_code_internal(curr, out, level + 1);
+                        curr = curr->next;
+                    }
+                    indent(out, level);
+                    fprintf(out, "}\n");
+                } else if (node->right->type == NODE_IF) {
+                    generate_code_internal(node->right, out, level); // 'else if' stays on same line
+                } else {
+                    fprintf(out, "\n");
+                    generate_code_internal(node->right, out, level + 1);
+                }
             }
             break;
 
         case NODE_WHILE:
             indent(out, level);
             fprintf(out, "while (");
-            generate_code_internal(node->left, out, 0);
+            if (node->left && node->left->type == NODE_BINOP) {
+                generate_code_internal(node->left->left, out, 0);
+                fprintf(out, " %s ", node->left->value);
+                generate_code_internal(node->left->right, out, 0);
+            } else {
+                generate_code_internal(node->left, out, 0);
+            }
             fprintf(out, ") ");
             if (node->right) {
-                if (node->right->type != NODE_BLOCK) fprintf(out, "\n");
-                generate_code_internal(node->right, out, node->right->type != NODE_BLOCK ? level + 1 : level);
+                if (node->right->type == NODE_BLOCK) {
+                    fprintf(out, "{\n");
+                    Node* curr = node->right->left;
+                    while (curr) {
+                        generate_code_internal(curr, out, level + 1);
+                        curr = curr->next;
+                    }
+                    indent(out, level);
+                    fprintf(out, "}\n");
+                } else {
+                    fprintf(out, "\n");
+                    generate_code_internal(node->right, out, level + 1);
+                }
             } else {
                 fprintf(out, "{}\n");
             }
@@ -138,17 +197,38 @@ static void generate_code_internal(Node* node, FILE* out, int level) {
         case NODE_FOR:
             indent(out, level);
             fprintf(out, "for (");
-            generate_code_internal(node->left, out, 0); // init
+            if (node->left && node->left->type == NODE_BINOP) {
+                generate_code_internal(node->left->left, out, 0);
+                fprintf(out, " %s ", node->left->value);
+                generate_code_internal(node->left->right, out, 0);
+            } else {
+                generate_code_internal(node->left, out, 0); // init
+            }
             fprintf(out, "; ");
-            generate_code_internal(node->middle, out, 0); // cond
+            if (node->middle && node->middle->type == NODE_BINOP) {
+                generate_code_internal(node->middle->left, out, 0);
+                fprintf(out, " %s ", node->middle->value);
+                generate_code_internal(node->middle->right, out, 0);
+            } else {
+                generate_code_internal(node->middle, out, 0); // cond
+            }
             fprintf(out, "; ");
-            // the inc part is usually stored in right's left or similar, let's assume right is block and inc is stored somehow.
-            // Wait, for loops need 4 parts. Node only has left, middle, right.
-            // I'll structure FOR as: left=init, middle=cond, right=list(inc, block) where right->left=inc, right->right=block.
             if (node->right && node->right->type == NODE_PROGRAM) {
                 generate_code_internal(node->right->left, out, 0); // inc
                 fprintf(out, ") ");
-                generate_code_internal(node->right->right, out, level); // block
+                if (node->right->right && node->right->right->type == NODE_BLOCK) {
+                    fprintf(out, "{\n");
+                    Node* curr = node->right->right->left;
+                    while (curr) {
+                        generate_code_internal(curr, out, level + 1);
+                        curr = curr->next;
+                    }
+                    indent(out, level);
+                    fprintf(out, "}\n");
+                } else {
+                    fprintf(out, "\n");
+                    generate_code_internal(node->right->right, out, level + 1);
+                }
             } else {
                 fprintf(out, ") {}\n");
             }
@@ -159,7 +239,13 @@ static void generate_code_internal(Node* node, FILE* out, int level) {
             fprintf(out, "return");
             if (node->left) {
                 fprintf(out, " ");
-                generate_code_internal(node->left, out, 0);
+                if (node->left->type == NODE_BINOP) {
+                    generate_code_internal(node->left->left, out, 0);
+                    fprintf(out, " %s ", node->left->value);
+                    generate_code_internal(node->left->right, out, 0);
+                } else {
+                    generate_code_internal(node->left, out, 0);
+                }
             }
             fprintf(out, ";\n");
             break;
