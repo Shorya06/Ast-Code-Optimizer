@@ -14,7 +14,7 @@ if %errorlevel% neq 0 (
 )
 
 echo Compiling C code with GCC...
-gcc -Wall -Wextra -g -o compiler.exe lex.yy.c parser.tab.c ast.c main.c
+gcc -Wall -Wextra -g -o compiler.exe lex.yy.c parser.tab.c ast.c optimizer.c codegen.c main.c
 if %errorlevel% neq 0 (
     echo GCC failed!
     exit /b %errorlevel%

@@ -1,21 +1,14 @@
-int a;
-int b = 100000000000000000000000000000000000; // Testing very large numbers handling 
-int c = a + b;
-
-/* 
- * Testing multi-line comment.
- * This should be completely ignored by the lexer.
- * Even if it's very long...
- */
-
-// Single line comment test
-
-a++;
---b;
-
-c = a && b;
-a = b || c;
-
-@ // Intentional syntax error / illegal character to test lexer recovery 
-
-int safe = c * b / 2;
+int main() {
+    int a = 5 + 3;
+    int b = a * 2;
+    int c = b / 2;
+    
+    if (0) {
+        int unreachable = 100;
+    } else {
+        int reachable = 200;
+    }
+    
+    return 0;
+    int unused = 404;
+}

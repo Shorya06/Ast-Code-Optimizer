@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
+#include "optimizer.h"
+#include "codegen.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -11,8 +13,9 @@ extern int yyparse();
 extern int yylex();
 extern FILE* yyin;
 extern Node* root;
+extern int parse_error_count;
 
-int lex_only = 0; // Global flag for lex-only visualization mode
+int lex_only = 0; // Global flag for lex only visualization mode
 
 int main(int argc, char** argv) {
 #ifdef _WIN32
@@ -60,19 +63,46 @@ int main(int argc, char** argv) {
         printf("--------------------------------------\n");
         int result = yyparse();
         
-        printf("\n\033[1;32m=== Abstract Syntax Tree ===\033[0m\n");
+        if (parse_error_count > 0) {
+            printf("\n\033[1;31m=== PARSER ERROR ===\033[0m\n");
+            printf("Optimization aborted.\n");
+            printf("Code generation aborted.\n");
+            fclose(file);
+            return 1;
+        }
+        
+        printf("\n\033[1;32m=== AST BEFORE OPTIMIZATION ===\033[0m\n");
         if (root) {
             print_ast(root, 0);
+            
+            generate_dot_file(root, "AST_before.dot");
+            
+            // Optimization Phase
+            root = optimize_ast(root);
+            
+            printf("\n\033[1;32m=== AST AFTER OPTIMIZATION ===\033[0m\n");
+            print_ast(root, 0);
+            
+            generate_dot_file(root, "AST_after.dot");
+            
+            printf("\n=== GENERATED OPTIMIZED CODE ===\n");
+            FILE* out_file = fopen("optimized_output.c", "w");
+            if (out_file) {
+                generate_code(root, out_file);
+                fclose(out_file);
+                printf("[\033[1;32m✓\033[0m] Code successfully written to 'optimized_output.c'\n");
+            } else {
+                fprintf(stderr, "[\033[1;31mX\033[0m] Failed to open optimized_output.c for writing\n");
+            }
+            
+            // Print generated code to console as well
+            generate_code(root, stdout);
+            printf("\n");
+            
             free_ast(root);
         } else {
             printf("(Empty or failed AST)\n");
         }
-        
-        printf("\n=== Target Code Optimization ===\n");
-        printf("[\033[1;33mPending for Phase 3\033[0m]\n");
-        
-        printf("\n=== Target Code Generation ===\n");
-        printf("[\033[1;33mPending for Phase 3\033[0m]\n\n");
         
         fclose(file);
         return result;

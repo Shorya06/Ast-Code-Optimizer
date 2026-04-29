@@ -1,26 +1,26 @@
-/* 
- * sample1_basic.c
- * 
- * Demonstration of basic lexical properties and AST struct building.
- * We include some variable declarations and basic assignments.
- */
+// Showcase: Basic Data Types, Initialization, & Abstract Syntax Tree Structure
 
-int initialValue = 10;
-float acceleration = 9; // Note: floats trigger Type(float) logic
-char code = 65;
+// 1. Core Data Types and Initialization
+int   starting_value = 100;
+float gravity = 9;
+char  letter_grade = 65;
 
-// Demonstrating standard assignments without initialization:
+// 2. Uninitialized Declarations
 int x;
 int y;
 int z;
 
-x = 100;
-y = 200;
-z = 300;
+// 3. Dynamic Assignment Logic
+x = starting_value + 50;
+y = x * 2;
+z = y / 3;
 
-// Re-assignments
+// 4. Sequential Dependencies
 x = y;
 y = z;
-z = initialValue;
+z = starting_value;
 
-/* End of basic sample */
+// 5. Dead Variables (Should be eliminated in optimization if unused elsewhere)
+int unused_data = 999;
+int redundant_data = 888;
+redundant_data = unused_data;

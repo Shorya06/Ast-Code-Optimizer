@@ -35,6 +35,12 @@ NUMBER      {DIGIT}+
 "float"                      { LOG_TOKEN("KEYWORD(float)"); return FLOAT; }
 "char"                       { LOG_TOKEN("KEYWORD(char)"); return CHAR; }
 "void"                       { LOG_TOKEN("KEYWORD(void)"); return VOID; }
+"if"                         { LOG_TOKEN("KEYWORD(if)"); return IF; }
+"else"                       { LOG_TOKEN("KEYWORD(else)"); return ELSE; }
+"while"                      { LOG_TOKEN("KEYWORD(while)"); return WHILE; }
+"for"                        { LOG_TOKEN("KEYWORD(for)"); return FOR; }
+"return"                     { LOG_TOKEN("KEYWORD(return)"); return RETURN; }
+"break"                      { LOG_TOKEN("KEYWORD(break)"); return BREAK; }
 
 {NUMBER}                     {
                                  LOG_TOKEN("NUMBER");
@@ -66,6 +72,11 @@ NUMBER      {DIGIT}+
 ")"                          { LOG_TOKEN("PAREN_CLOSE"); return ')'; }
 "{"                          { LOG_TOKEN("BRACE_OPEN"); return '{'; }
 "}"                          { LOG_TOKEN("BRACE_CLOSE"); return '}'; }
+"["                          { LOG_TOKEN("BRACKET_OPEN"); return '['; }
+"]"                          { LOG_TOKEN("BRACKET_CLOSE"); return ']'; }
+","                          { LOG_TOKEN("COMMA"); return ','; }
+">"                          { LOG_TOKEN("OPERATOR(>)"); return '>'; }
+"<"                          { LOG_TOKEN("OPERATOR(<)"); return '<'; }
 
 .                            { 
                                  fprintf(stderr, "\033[1;31mWarning:\033[0m Unrecognized character '%s' at line %d, skipping.\n", yytext, line_num); 

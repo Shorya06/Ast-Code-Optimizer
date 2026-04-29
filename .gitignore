@@ -2,3 +2,7 @@
 lex.yy.c
 parser.tab.c
 parser.tab.h
+*.dot
+out.txt
+optimized_output.c
+.vscode/

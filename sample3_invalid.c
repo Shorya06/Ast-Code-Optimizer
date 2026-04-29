@@ -1,24 +1,22 @@
-/* 
- * sample3_invalid.c
- * 
- * Demonstrates the Lexer mapping out tokens correctly, 
- * but triggering a Graceful Error Recovery inside Bison due to invalid syntax.
- */
+// Showcase: Professional Context-Aware Compiler Diagnostics & Error Recovery
 
-int valid_entry = 1;
-int another_valid = 2;
+// 1. Missing Semicolon Error
+// The compiler should detect this and suggest checking for a missing semicolon.
+int missing_semicolon = 10
 
-// Intentional Syntax Error: assignment missing RHS value before semicolon
-int broken_syntax = ;
+// 2. Invalid Expression Grammar
+// The compiler should catch random token mismatches.
+int broken_math = * 5;
 
-// Another Syntax Error: mismatched / missing values
-int x = + * 5;
+// 3. Incomplete For Loop
+// The compiler should reject empty or incomplete loops with an exact expected syntax hint.
+for();
 
-// The compiler should skip the bad statements, log the error, 
-// and gracefully recover so it doesn't crash here:
-int system_recovered = 1;
+// 4. Missing Right-Hand Assignment
+// The compiler should prompt the user to provide a valid value after '='.
+int missing_value = ;
 
-valid_entry++;
-another_valid--;
-
-/* If the compiler reaches here without a fatal crash, error recovery succeeded! */
+// 5. Successful Recovery Check
+// The parser should recover after logging the errors and continue evaluating the rest of the file.
+int successfully_recovered = 100;
+successfully_recovered++;
