@@ -1,142 +1,75 @@
 # AST Code Optimizer
 
-AST Code Optimizer is a full-stack web application that analyzes and optimizes JavaScript code using Abstract Syntax Tree (AST) transformations. The project focuses on compiler optimization concepts and improves code readability, efficiency, and structure through automated optimizations.
+A compiler front-end for a C-like language, written in C with **Flex** and **Bison**. It lexes and parses source into an Abstract Syntax Tree (AST), applies multi-pass compiler optimizations, and regenerates optimized C code — with full AST visualization before and after.
 
----
+## What it does
 
-## Features
+- **Lexer + parser** (Flex / Bison) for a C-like subset: `int`/`float`/`char`/`void` types, variable declarations and assignments, `if`/`else`, `while`, `for`, functions, arrays, `return`/`break`, `++`/`--`, and comparison/logical operators
+- **AST construction** with printed tree output and Graphviz **DOT files** (`AST_before.dot` / `AST_after.dot`) for visualization
+- **Optimization passes** (`optimizer.c`):
+  - **Constant folding** — `2 + 3` → `5`, including `<<`, `>>`, and zero-division guards
+  - **Constant propagation** — constant variables substituted at use sites, reassignment-aware
+  - **Strength reduction** — `x * 2` → `x << 1`, `x / 2` → `x >> 1`
+  - **Dead-code elimination** — unused constant declarations (side-effect checked), unreachable code after `return`, and `if (0)` branches
+  - Optimization summary printed per pass
+- **Code generation** — emits optimized C to the console and to `optimized_output.c`
+- **`--lex` debug mode** — dumps the token stream without building the AST
+- **Parser error recovery** with actionable hints (missing braces, invalid expressions, incomplete `for` loops, unexpected tokens)
 
-- Parse JavaScript code into AST
-- Perform real-time code optimization
-- Remove dead or unused code
-- Simplify expressions and constants
-- Optimize redundant statements
-- Interactive and responsive UI
-- Syntax-aware code transformation
-- Fast and scalable optimization engine
+## Tech stack
 
----
+| Component | Tool |
+|---|---|
+| Language | C (GCC) |
+| Lexer | Flex (`lexer.l`) |
+| Parser | Bison (`parser.y`) |
+| Build | Makefile / `build.bat` |
 
-## Tech Stack
+## Build & run
 
-### Frontend
-- React.js
-- Tailwind CSS
-- JavaScript
-
-### Backend
-- Node.js
-- Express.js
-
-### AST Tools
-- Babel Parser
-- Babel Traverse
-- Babel Generator
-- Babel Types
-
----
-
-## Project Structure
+**Linux / macOS** (requires `gcc`, `flex`, `bison`):
 
 ```bash
-AST-Code-Optimizer/
-│
-├── client/              # Frontend application
-├── server/              # Backend server
-├── optimizer/           # AST optimization logic
-├── package.json
-└── README.md
+make
+./compiler.exe sample1_basic.c
 ```
 
----
+**Windows** (requires `win_bison`, `win_flex`, `gcc`):
 
-## Optimization Techniques Implemented
+```bat
+build.bat
+```
 
-- Constant Folding
-- Dead Code Elimination
-- Unused Variable Removal
-- Expression Simplification
-- Redundant Statement Cleanup
-
----
-
-## How It Works
-
-1. User enters JavaScript code in the editor
-2. Backend parses the code into an AST
-3. Optimization algorithms process the AST
-4. Optimized AST is converted back into source code
-5. Optimized code is displayed to the user
-
----
-
-## Installation and Setup
-
-### Clone the Repository
+### Usage
 
 ```bash
-git clone https://github.com/codewithgaani/AST-Code-Optimizer.git
+compiler.exe [--lex] <source_file>
 ```
 
-### Navigate to Project Folder
+Sample inputs: `sample1_basic.c` (data types & initialization), `sample2_expression.c` (expressions), `sample3_invalid.c` (error-recovery demo), `test_input.c`.
 
-```bash
-cd AST-Code-Optimizer
+### Outputs
+
+- AST dumps in the console, plus `ast_before.txt` / `ast_after.txt`
+- Graphviz DOT files for visualization (`AST_before.dot`, `AST_after.dot`)
+- Optimized code in `optimized_output.c`
+
+## Project structure
+
+```text
+Ast-Code-Optimizer/
+├── lexer.l        # Flex lexer
+├── parser.y       # Bison grammar
+├── ast.c / ast.h  # AST nodes, printing, DOT generation
+├── optimizer.c / optimizer.h  # Multi-pass optimization engine
+├── codegen.c / codegen.h      # Optimized C generation
+├── main.c         # Driver (compile, optimize, visualize)
+├── Makefile / build.bat
+└── sample*.c      # Example inputs
 ```
-
-### Install Dependencies
-
-```bash
-npm install
-```
-
-### Start Backend Server
-
-```bash
-cd server
-npm start
-```
-
-### Start Frontend
-
-```bash
-cd client
-npm start
-```
-
----
-
-## Future Enhancements
-
-- Multi-language optimization support
-- AST visualization tools
-- AI-powered optimization suggestions
-- Performance benchmarking
-- Advanced compiler-level optimizations
-
----
-
-## Learning Outcomes
-
-This project helped in understanding:
-
-- Abstract Syntax Trees (AST)
-- Compiler design basics
-- Code transformation techniques
-- Babel ecosystem
-- Full-stack web development
-- Optimization algorithms
-
----
 
 ## Author
 
-**Krishna Bhatt, Shorya Tripathi**
+**Shorya Tripathi** — [github.com/Shorya06](https://github.com/Shorya06)
 
-GitHub: https://github.com/codewithgaani
-
----
-
-## License
-
-This project is created for educational and learning purposes.
+Built for learning and educational purposes.
